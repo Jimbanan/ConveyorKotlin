@@ -1,16 +1,13 @@
 package org.example.conveyorkotlin.service.impl
 
-import lombok.extern.slf4j.Slf4j
-import org.example.conveyorkotlin.service.ConveyorService
+import org.example.conveyorkotlin.service.CalculationService
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
-@Slf4j
-class CalculationService {
-    fun getMonthlyInterest(rate: BigDecimal): BigDecimal {
-
+class CalculationServiceImpl: CalculationService {
+    override fun getMonthlyInterest(rate: BigDecimal): BigDecimal {
         val monthlyInterest =
             rate.divide(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(12), 5, RoundingMode.HALF_UP)
 
@@ -18,8 +15,7 @@ class CalculationService {
         return monthlyInterest
     }
 
-    fun getMonthlyPayment(rate: BigDecimal, totalAmount: BigDecimal?, term: Int?): BigDecimal {
-
+    override fun getMonthlyPayment(rate: BigDecimal, totalAmount: BigDecimal?, term: Int?): BigDecimal {
         val i = getMonthlyInterest(rate)
 
         val monthlyPayment = totalAmount?.multiply(
@@ -37,14 +33,13 @@ class CalculationService {
         return monthlyPayment!!
     }
 
-    fun getTotalAmount(monthlyPayment: BigDecimal, term: Int): BigDecimal {
-
+    override fun getTotalAmount(monthlyPayment: BigDecimal, term: Int): BigDecimal {
         val totalAmount = monthlyPayment.multiply(BigDecimal.valueOf(term.toLong()))
 
         return totalAmount
     }
 
-    fun getInterestPayment(monthlyPayment: BigDecimal, totalAmount: BigDecimal, term: Int): BigDecimal {
+    override fun getInterestPayment(monthlyPayment: BigDecimal, totalAmount: BigDecimal, term: Int): BigDecimal {
         val interestPayment =
             monthlyPayment.subtract(totalAmount.divide(BigDecimal.valueOf(term.toLong()), 5, RoundingMode.HALF_UP))
 

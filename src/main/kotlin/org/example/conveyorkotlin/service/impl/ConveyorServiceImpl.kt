@@ -19,7 +19,7 @@ class ConveyorServiceImpl : ConveyorService {
     val baseRate: BigDecimal = BigDecimal.valueOf(20)
 
     @Autowired
-    lateinit var calculation: CalculationService
+    lateinit var calculation: CalculationServiceImpl
 
     var numberOffer: Int = 1
 
@@ -100,11 +100,10 @@ class ConveyorServiceImpl : ConveyorService {
 
         if (scoringDataDTO.isSalaryClient) {
             rate = rate.subtract(BigDecimal.valueOf(1))
-
         }
 
         if (scoringDataDTO.isInsuranceEnabled) {
-            amount = amount.add(scoringDataDTO.amount?.multiply(BigDecimal.valueOf(0.05)))
+            amount = amount.add(scoringDataDTO.amount.multiply(BigDecimal.valueOf(0.05)))
             rate = rate.subtract(BigDecimal.valueOf(3))
 
         }
@@ -127,8 +126,7 @@ class ConveyorServiceImpl : ConveyorService {
 
         }
 
-        if (scoringDataDTO.employment.salary.multiply(BigDecimal.valueOf(20))
-                .compareTo(scoringDataDTO.amount) < 0
+        if (scoringDataDTO.employment.salary.multiply(BigDecimal.valueOf(20)) < scoringDataDTO.amount
         ) {
             throw ScoringException("Requested amount more than 20 salaries - Denied")
         }
@@ -190,7 +188,7 @@ class ConveyorServiceImpl : ConveyorService {
             isInsuranceEnabled = scoringDataDTO.isInsuranceEnabled,
             isSalaryClient = scoringDataDTO.isSalaryClient,
             paymentSchedule = getPaymentScheduleElement(
-                scoringDataDTO.term.toInt(),
+                scoringDataDTO.term,
                 monthlyPayment,
                 amount,
                 calculation.getTotalAmount(monthlyPayment, scoringDataDTO.term)
